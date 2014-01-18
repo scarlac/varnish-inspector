@@ -12,7 +12,13 @@ chrome.webRequest.onHeadersReceived.addListener(function (details) {
     var headers = details.responseHeaders;
     for (var i = 0; i < headers.length; i++) {
       var header = headers[i];
-      if (header.name === 'Via' && header.value.indexOf('varnish')) {
+      if(header.name.toLowerCase() === 'age' && parseInt(header.value) > 0) {
+        console.log(header.name.toLowerCase(), parseInt(header.value));
+        buttons[details.tabId].active = true;
+        buttons[details.tabId].status = 'hit';
+        buttons[details.tabId].hits = '>1';
+        buttons[details.tabId].hint = 'Age: '+header.value;
+      } else if (header.name === 'Via' && header.value.indexOf('varnish')) {
         buttons[details.tabId].active = true;
       }
       if (header.name === 'X-Cache') {
@@ -20,8 +26,6 @@ chrome.webRequest.onHeadersReceived.addListener(function (details) {
             buttons[details.tabId].status = 'hit';
         } else if (header.value.indexOf('MISS') !== -1) {
             buttons[details.tabId].status = 'miss';
-        } else if (header.value.indexOf('Age') !== -1) {
-            buttons[details.tabId].status = 'hit';
         }
       }
       if(header.name === 'X-Cache-Hits') {
@@ -75,9 +79,21 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
         tabId: details.tabId
         });
     }
+
+    chrome.browserAction.setTitle({
+      tabId: details.tabId,
+      title: buttons[details.tabId].hint
+    });
     chrome.browserAction.setIcon({
       path: 'img/button_' + color + '.png',
       tabId: details.tabId
     });
+
+    // reset, so we dont get wrong info on a page that has no caching info
+    buttons[details.tabId] = {
+      'active': false,
+      'status': null,
+      'hits':   null
+    };
   }
 });
