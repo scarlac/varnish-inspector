@@ -14,7 +14,7 @@ The button icon appears gray/disabled when no special HTTP headers are detected.
 
 ### Varnish detected
 
-The button icon becomes Varnish-blue when the HTTP header `Via` is detected containing the string "varnish":
+The button icon becomes Varnish-blue when the HTTP header `Via` is detected containing the string "varnish" or if the `Age` HTTP header appears:
 
 ![Button when active](https://raw.github.com/deizel/varnish-inspector/master/img/screenshot_active.png)
 
