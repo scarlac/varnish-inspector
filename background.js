@@ -20,6 +20,8 @@ chrome.webRequest.onHeadersReceived.addListener(function (details) {
             buttons[details.tabId].status = 'hit';
         } else if (header.value.indexOf('MISS') !== -1) {
             buttons[details.tabId].status = 'miss';
+        } else if (header.value.indexOf('Age') !== -1) {
+            buttons[details.tabId].status = 'hit';
         }
       }
       if(header.name === 'X-Cache-Hits') {
